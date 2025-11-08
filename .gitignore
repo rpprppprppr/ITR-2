@@ -1,0 +1,29 @@
+# IDE specific files
+.idea/
+*.iml
+*.iws
+*.DS_Store
+
+# PHP-specific files
+/vendor/
+/node_modules/
+/composer.lock
+/composer.json
+
+# Logs and cache
+/logs/
+/cache/
+/temp/
+
+# Environment files (use .env.example)
+.env
+.env.*
+!/.env.example
+
+# Build and test files
+/build/
+/tests/output/
+
+# Other
+*.swp
+*.swo
