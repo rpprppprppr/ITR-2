@@ -22,10 +22,10 @@ class Feedback {
 }
 
 class ProductReview extends Feedback {
-    public Product $product;
+    public AbstractProduct $product;
     public int $rating;
 
-    public function __construct(User $user, Product $product, string $message, int $rating) {
+    public function __construct(User $user, AbstractProduct $product, string $message, int $rating) {
         parent::__construct($user, $message);
         $this->product = $product;
         $this->rating = $rating;

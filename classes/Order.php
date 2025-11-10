@@ -16,7 +16,7 @@ class Order {
         $this->created_at = date('c');
     }
 
-    public function addItem(Product $product, int $quantity): void {
+    public function addItem(AbstractProduct $product, int $quantity): void {
         $this->items[] = new OrderItem($product, $quantity, $product->price);
     }
 

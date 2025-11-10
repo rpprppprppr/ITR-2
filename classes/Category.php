@@ -10,7 +10,7 @@ class Category {
         $this->name = $name;
     }
 
-    public function addProduct(Product $product): void {
+    public function addProduct(AbstractProduct $product): void {
         $this->products[] = $product;
     }
 

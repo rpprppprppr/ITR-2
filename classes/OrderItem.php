@@ -1,11 +1,11 @@
 <?php
 
 class OrderItem {
-    public Product $product;
+    public AbstractProduct $product;
     public int $quantity;
     public float $price;
 
-    public function __construct(Product $product, int $quantity, float $price) {
+    public function __construct(AbstractProduct $product, int $quantity, float $price) {
         $this->product = $product;
         $this->quantity = $quantity;
         $this->price = $price;

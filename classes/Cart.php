@@ -5,7 +5,7 @@ require_once 'OrderItem.php';
 class Cart {
     public array $items = [];
 
-    public function addProduct(Product $product, int $quantity): void {
+    public function addProduct(AbstractProduct $product, int $quantity): void {
         foreach ($this->items as $item) {
             if ($item->product->id === $product->id) {
                 $item->quantity = $quantity;
