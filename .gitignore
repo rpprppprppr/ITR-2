@@ -7,8 +7,6 @@
 # PHP-specific files
 /vendor/
 /node_modules/
-/composer.lock
-/composer.json
 
 # Logs and cache
 /logs/
