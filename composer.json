@@ -1,0 +1,16 @@
+{
+    "name": "daria/project-php-itr2",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "src\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.4",
+        "fakerphp/faker": "^1.24"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    }
+}
