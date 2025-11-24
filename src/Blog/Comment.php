@@ -5,26 +5,26 @@ namespace src\Blog;
 readonly class Comment
 {
     public function __construct(
-        private int $id,
-        private int $authorId,
-        private int $articleId,
+        private UUID $uuid,
+        private UUID $post_uuid,
+        private UUID $author_uuid,
         private string $text
     )
     {}
 
-    public function getId(): int
+    public function getId(): UUID
     {
-        return $this->id;
+        return $this->uuid;
     }
 
-    public function getAuthorId(): int
+    public function getPostId(): UUID
     {
-        return $this->authorId;
+        return $this->post_uuid;
     }
 
-    public function getArticleId(): int
+    public function getAuthorId(): UUID
     {
-        return $this->articleId;
+        return $this->author_uuid;
     }
 
     public function getText(): string

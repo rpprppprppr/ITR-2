@@ -1,10 +1,12 @@
 <?php
 
 use src\Blog\Repositories\UsersRepository\SqliteUsersRepository;
+use src\Blog\Repositories\CommentsRepository\SqliteCommentsRepository;
 use src\Blog\Repositories\PostsRepository\SqlitePostsRepository;
 use src\Blog\User;
-use src\Blog\Post;
 use src\Blog\Person\Name;
+use src\Blog\Post;
+use src\Blog\Comment;
 use src\Blog\UUID;
 
 require_once __DIR__ . "/vendor/autoload.php";
@@ -26,3 +28,8 @@ $postRepository = new SqlitePostsRepository($connection);
 
 $postRepository->save(new Post($PostUuid1, $UserUuid1, "Hello world!", "It's a text of post"));
 $postRepository->save(new Post($PostUuid2, $UserUuid2, "Goodbye my friends!", "Time is over"));
+
+$commentRepository = new SqliteCommentsRepository($connection);
+
+$commentRepository->save(new Comment(UUID::random(), $PostUuid1, $UserUuid2, "Good job, my friend"));
+$commentRepository->save(new Comment(UUID::random(), $PostUuid2, $UserUuid1, "See you later!"));

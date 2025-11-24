@@ -34,6 +34,6 @@ class InMemoryPostsRepository implements PostsRepositoryInterface
             }
         }
 
-        throw new PostNotFoundException("Post not found: $uuid");
+        throw new PostNotFoundException("Post not found: $uuid (authorId)");
     }
 }
