@@ -2,22 +2,34 @@
 
 namespace src\Blog;
 
+use src\Blog\Person\Name;
+
 readonly class User
 {
     public function __construct(
-        private int $id,
-        private string $firstName,
-        private string $lastName
+        private UUID $uuid,
+        private string $username,
+        private Name $name
     )
     {}
 
-    public function getId(): int
+    public function getId(): UUID
     {
-        return $this->id;
+        return $this->uuid;
     }
 
-    public function getFullName(): string
+    public function getUsername(): string
     {
-        return $this->firstName . ' ' . $this->lastName;
+        return $this->username;
+    }
+
+    public function getName(): Name
+    {
+        return $this->name;
+    }
+
+    public function __toString(): string
+    {
+        return "$this->username as $this->name";
     }
 }
