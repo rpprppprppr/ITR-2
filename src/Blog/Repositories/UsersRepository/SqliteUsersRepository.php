@@ -28,7 +28,7 @@ readonly class SqliteUsersRepository implements UsersRepositoryInterface
             ":uuid"=>$user->getId(),
             ":username"=>$user->getUsername(),
             ":first_name"=>$user->getName()->getFirstName(),
-            ":last_name"=>$user->getName()->getLastName(),
+            ":last_name"=>$user->getName()->getLastName()
         ]);
     }
 
@@ -63,7 +63,7 @@ readonly class SqliteUsersRepository implements UsersRepositoryInterface
         return new User(
             new UUID($result["uuid"]),
             $result["username"],
-            new Name($result["first_name"], $result["last_name"]),
+            new Name($result["first_name"], $result["last_name"])
         );
     }
 }

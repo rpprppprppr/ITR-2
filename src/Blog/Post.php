@@ -2,24 +2,24 @@
 
 namespace src\Blog;
 
-readonly class Article
+readonly class Post
 {
     public function __construct(
-        private int $id,
-        private int $authorId,
+        private UUID $uuid,
+        private UUID $author_uuid,
         private string $title,
         private string $text
     )
     {}
 
-    public function getId(): int
+    public function getId(): UUID
     {
-        return $this->id;
+        return $this->uuid;
     }
 
-    public function getAuthorId(): int
+    public function getAuthorId(): UUID
     {
-        return $this->authorId;
+        return $this->author_uuid;
     }
 
     public function getTitle(): string
