@@ -13,13 +13,16 @@ $connection = new PDO("sqlite:" . __DIR__ . "/blog.sqlite");
 
 $userRepository = new SqliteUsersRepository($connection);
 
-$uuid1 = UUID::random();
-$uuid2 = UUID::random();
+$UserUuid1 = UUID::random();
+$UserUuid2 = UUID::random();
 
-$userRepository->save(new User($uuid1, "vasilii_terkin",new Name("Vasilii", "Terkin")));
-$userRepository->save(new User($uuid2, "ivan_petrov",new Name("Ivan", "Petrov")));
+$userRepository->save(new User($UserUuid1, "vasilii_terkin",new Name("Vasilii", "Terkin")));
+$userRepository->save(new User($UserUuid2, "ivan_petrov",new Name("Ivan", "Petrov")));
+
+$PostUuid1 = UUID::random();
+$PostUuid2 = UUID::random();
 
 $postRepository = new SqlitePostsRepository($connection);
 
-$postRepository->save(new Post(UUID::random(), $uuid1, "Hello world!", "It's a text of post"));
-$postRepository->save(new Post(UUID::random(), $uuid2, "Goodbye my friends!", "Time is over"));
+$postRepository->save(new Post($PostUuid1, $UserUuid1, "Hello world!", "It's a text of post"));
+$postRepository->save(new Post($PostUuid2, $UserUuid2, "Goodbye my friends!", "Time is over"));

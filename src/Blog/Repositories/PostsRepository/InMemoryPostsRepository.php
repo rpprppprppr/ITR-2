@@ -25,4 +25,15 @@ class InMemoryPostsRepository implements PostsRepositoryInterface
 
         throw new PostNotFoundException("Post not found: $uuid");
     }
+
+    public function getByAuthorId(UUID $uuid): Post
+    {
+        foreach ($this->posts as $post) {
+            if ((string)$post->getAuthorId() === (string)$uuid) {
+                return $post;
+            }
+        }
+
+        throw new PostNotFoundException("Post not found: $uuid");
+    }
 }

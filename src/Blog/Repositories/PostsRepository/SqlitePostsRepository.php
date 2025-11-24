@@ -38,10 +38,25 @@ readonly class SqlitePostsRepository implements PostsRepositoryInterface
             ":uuid"=>$uuid,
         ]);
 
+        return $this->getPost($statement, $uuid);
+    }
+
+    public function getByAuthorId(UUID $uuid): Post
+    {
+        $statement = $this->connection->prepare("SELECT * FROM posts WHERE author_uuid = :author_uuid");
+        $statement->execute([
+            ":author_uuid"=>$uuid,
+        ]);
+
+        return $this->getPost($statement, $uuid);
+    }
+
+    public function getPost(PDOStatement $statement, string $postPayload): Post
+    {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if ($result === false) {
-            throw new PostNotFoundException("Post not found: $uuid");
+            throw new PostNotFoundException("Post not found: $postPayload");
         }
 
         return new Post(
