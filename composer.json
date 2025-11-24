@@ -8,7 +8,9 @@
     },
     "require": {
         "php": "^8.4",
-        "fakerphp/faker": "^1.24"
+        "fakerphp/faker": "^1.24",
+        "ext-pdo": "*",
+        "symfony/polyfill-uuid": "^1.33"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest"
