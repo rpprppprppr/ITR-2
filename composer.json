@@ -13,6 +13,7 @@
         "symfony/polyfill-uuid": "^1.33"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest"
+        "roave/security-advisories": "dev-latest",
+        "phpunit/phpunit": "^12.4"
     }
 }
