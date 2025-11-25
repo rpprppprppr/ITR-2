@@ -6,7 +6,7 @@ use src\Blog\UUID;
 use src\Blog\Post;
 use src\Blog\Exceptions\PostNotFoundException;
 
-class InMemoryPostsRepository implements PostsRepositoryInterface
+class InMemoryPostRepository implements PostRepositoryInterface
 {
     private array $posts = [];
 

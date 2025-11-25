@@ -10,7 +10,7 @@ use src\Blog\User;
 use src\Blog\Exceptions\UserNotFoundException;
 use src\Blog\UUID;
 
-readonly class SqliteUsersRepository implements UsersRepositoryInterface
+readonly class SqliteUserRepository implements UserRepositoryInterface
 {
     public function __construct(
         private PDO $connection

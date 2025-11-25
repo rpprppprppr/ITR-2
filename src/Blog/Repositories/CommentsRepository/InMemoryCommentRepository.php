@@ -4,10 +4,10 @@ namespace src\Blog\Repositories\CommentsRepository;
 
 use src\Blog\Exceptions\CommentNotFoundException;
 use src\Blog\Comment;
-use src\Blog\Repositories\CommentsRepository\CommentsRepositoryInterface;
+use src\Blog\Repositories\CommentsRepository\CommentRepositoryInterface;
 use src\Blog\UUID;
 
-class InMemoryCommentsRepository implements CommentsRepositoryInterface
+class InMemoryCommentRepository implements CommentRepositoryInterface
 {
     private array $comments = [];
 

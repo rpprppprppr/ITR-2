@@ -9,7 +9,7 @@ use src\Blog\Comment;
 use src\Blog\Exceptions\CommentNotFoundException;
 use src\Blog\UUID;
 
-readonly class SqliteCommentsRepository implements CommentsRepositoryInterface
+readonly class SqliteCommentRepository implements CommentRepositoryInterface
 {
     public function __construct(
         private PDO $connection

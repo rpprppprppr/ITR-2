@@ -6,7 +6,7 @@ use src\Blog\UUID;
 use src\Blog\User;
 use src\Blog\Exceptions\UserNotFoundException;
 
-class InMemoryUsersRepository implements UsersRepositoryInterface
+class InMemoryUserRepository implements UserRepositoryInterface
 {
     private array $users = [];
 

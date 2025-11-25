@@ -9,7 +9,7 @@ use src\Blog\Post;
 use src\Blog\Exceptions\PostNotFoundException;
 use src\Blog\UUID;
 
-readonly class SqlitePostsRepository implements PostsRepositoryInterface
+readonly class SqlitePostRepository implements PostRepositoryInterface
 {
     public function __construct(
         private PDO $connection
