@@ -21,6 +21,7 @@
 # Build and test files
 /build/
 /tests/output/
+/coverage_report/
 
 # Other
 *.swp

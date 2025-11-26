@@ -44,7 +44,7 @@ class Arguments
     {
         if(!array_key_exists($argument, $this->arguments)) {
             throw new ArgumentException(
-                "No such argument :$argument"
+                "No such argument: $argument"
             );
         }
 

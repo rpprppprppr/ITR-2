@@ -1,10 +1,19 @@
 {
     "name": "daria/project-php-itr2",
     "type": "project",
+    "scripts": {
+        "test": "vendor/bin/phpunit tests --testdox --color",
+        "test:coverage": "php -dxdebug.mode=coverage vendor/bin/phpunit tests --coverage-html coverage_report --coverage-filter src"
+    },
     "autoload": {
         "psr-4": {
             "src\\": "src/"
         }
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "src\\Blog\\UnitTests": "tests/"
+      }
     },
     "require": {
         "php": "^8.4",

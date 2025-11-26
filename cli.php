@@ -1,13 +1,10 @@
 <?php
 
 use src\Blog\Repositories\UsersRepository\SqliteUserRepository;
-use src\Blog\Repositories\CommentsRepository\SqliteCommentRepository;
-use src\Blog\Repositories\PostsRepository\SqlitePostRepository;
-use src\Blog\User;
-use src\Blog\Person\Name;
-use src\Blog\Post;
-use src\Blog\Comment;
-use src\Blog\UUID;
+
+use src\Blog\Commands\Arguments;
+use src\Blog\Commands\CreateUserCommand;
+use src\Blog\Exceptions\CommandException;
 
 require_once __DIR__ . "/vendor/autoload.php";
 
@@ -15,21 +12,10 @@ $connection = new PDO("sqlite:" . __DIR__ . "/blog.sqlite");
 
 $userRepository = new SqliteUserRepository($connection);
 
-$UserUuid1 = UUID::random();
-$UserUuid2 = UUID::random();
+$command = new CreateUserCommand($userRepository);
 
-$userRepository->save(new User($UserUuid1, "vasilii_terkin",new Name("Vasilii", "Terkin")));
-$userRepository->save(new User($UserUuid2, "ivan_petrov",new Name("Ivan", "Petrov")));
-
-$PostUuid1 = UUID::random();
-$PostUuid2 = UUID::random();
-
-$postRepository = new SqlitePostRepository($connection);
-
-$postRepository->save(new Post($PostUuid1, $UserUuid1, "Hello world!", "It's a text of post"));
-$postRepository->save(new Post($PostUuid2, $UserUuid2, "Goodbye my friends!", "Time is over"));
-
-$commentRepository = new SqliteCommentRepository($connection);
-
-$commentRepository->save(new Comment(UUID::random(), $PostUuid1, $UserUuid2, "Good job, my friend"));
-$commentRepository->save(new Comment(UUID::random(), $PostUuid2, $UserUuid1, "See you later!"));
+try {
+    $command->handle(Arguments::fromArgv($argv));
+} catch (CommandException $error) {
+    echo "{$error->getMessage()}" . PHP_EOL;
+}

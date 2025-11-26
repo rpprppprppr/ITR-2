@@ -8,4 +8,8 @@ RUN apt-get update && apt-get install -y \
     zip \
     libzip-dev
 
+#Установка xdebug
+RUN pecl install xdebug && docker-php-ext-enable xdebug
+
+#Установка mysql
 RUN docker-php-ext-install pdo pdo_mysql
