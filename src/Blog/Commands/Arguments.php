@@ -43,9 +43,7 @@ class Arguments
     public function get(string $argument): string
     {
         if(!array_key_exists($argument, $this->arguments)) {
-            throw new ArgumentException(
-                "No such argument: $argument"
-            );
+            throw new ArgumentException("No such argument: $argument");
         }
 
         return $this->arguments[$argument];
