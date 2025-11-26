@@ -1,8 +1,7 @@
 <?php
 
-namespace src\Blog\UnitTests\Dummies;
+namespace src\Blog\Repositories\UsersRepository;
 
-use src\Blog\Repositories\UsersRepository\UserRepositoryInterface;
 use src\Blog\Exceptions\UserNotFoundException;
 use src\Blog\Person\Name;
 use src\Blog\User;

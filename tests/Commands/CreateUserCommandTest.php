@@ -12,8 +12,7 @@ use src\Blog\Exceptions\CommandException;
 use src\Blog\Exceptions\UserNotFoundException;
 
 use src\Blog\Repositories\UsersRepository\UserRepositoryInterface;
-
-use src\Blog\UnitTests\Dummies\DummyUserRepository;
+use src\Blog\Repositories\UsersRepository\DummyUserRepository;
 
 use src\Blog\User;
 use src\Blog\UUID;
@@ -24,7 +23,7 @@ class CreateUserCommandTest extends TestCase
     {
         return new class implements UserRepositoryInterface
         {
-            private bool $called = false;
+            protected bool $called = false;
 
 
             public function save(User $user): void
