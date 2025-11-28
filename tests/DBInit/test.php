@@ -1,6 +1,6 @@
 <?php
 
-$connection = new PDO("sqlite:" . __DIR__ . "/blog.sqlite");
+$connection = new PDO("sqlite:" . __DIR__ . "/test.sqlite");
 
 $sql = <<<SQL
 DROP TABLE IF EXISTS users;
