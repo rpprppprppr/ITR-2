@@ -61,7 +61,7 @@ readonly class SqlitePostRepository implements PostRepositoryInterface
 
         return new Post(
             new UUID($result["uuid"]),
-            $result["author_uuid"],
+            new UUID($result["author_uuid"]),
             $result["title"],
             $result["text"]
         );
