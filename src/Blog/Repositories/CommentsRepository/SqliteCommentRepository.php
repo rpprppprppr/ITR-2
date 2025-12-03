@@ -35,11 +35,23 @@ readonly class SqliteCommentRepository implements CommentRepositoryInterface
     {
         $statement = $this->connection->prepare("SELECT * FROM comments WHERE uuid = :uuid");
         $statement->execute([
-            ":uuid"=>$uuid,
+            ':uuid' => (string)$uuid,
         ]);
 
-        return $this->getComment($statement, $uuid);
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if ($result === false) {
+            throw new CommentNotFoundException("Comment not found: $uuid");
+        }
+
+        return new Comment(
+            new UUID($result['uuid']),
+            new UUID($result['post_uuid']),
+            new UUID($result['author_uuid']),
+            $result['text']
+        );
     }
+
 
     public function getByPostId(UUID $uuid): Comment
     {
@@ -71,8 +83,8 @@ readonly class SqliteCommentRepository implements CommentRepositoryInterface
 
         return new Comment(
             new UUID($result["uuid"]),
-            $result["post_uuid"],
-            $result["author_uuid"],
+            new UUID($result["post_uuid"]),
+            new UUID($result["author_uuid"]),
             $result["text"]
         );
     }
