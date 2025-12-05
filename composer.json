@@ -12,14 +12,15 @@
     },
     "autoload-dev": {
       "psr-4": {
-        "src\\Blog\\UnitTests": "tests/"
+        "src\\Blog\\UnitTests\\": "tests/"
       }
     },
     "require": {
         "php": "^8.4",
         "fakerphp/faker": "^1.24",
         "ext-pdo": "*",
-        "symfony/polyfill-uuid": "^1.33"
+        "symfony/polyfill-uuid": "^1.33",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

@@ -6,7 +6,7 @@ use DateTimeImmutable;
 
 readonly class Person
 {
-    private function __construct(
+    public function __construct(
         private Name $name,
         private DateTimeImmutable $registeredOn
     )
