@@ -3,7 +3,6 @@
 namespace src\Blog\Repositories\PostsRepository;
 
 use PDO;
-use PDOStatement;
 
 use src\Blog\Post;
 use src\Blog\Exceptions\PostNotFoundException;
@@ -24,8 +23,8 @@ readonly class SqlitePostRepository implements PostRepositoryInterface
         ");
 
         $statement->execute([
-            ":uuid"=>$post->getId(),
-            ":author_uuid"=>$post->getAuthorId(),
+            ":uuid" => (string)$post->getId(),
+            ":author_uuid" => (string)$post->getAuthorId(),
             ":title"=>$post->getTitle(),
             ":text"=>$post->getText()
         ]);
@@ -35,28 +34,13 @@ readonly class SqlitePostRepository implements PostRepositoryInterface
     {
         $statement = $this->connection->prepare("SELECT * FROM posts WHERE uuid = :uuid");
         $statement->execute([
-            ":uuid"=>$uuid,
+            ":uuid" => (string)$uuid
         ]);
 
-        return $this->getPost($statement, $uuid);
-    }
-
-    public function getByAuthorId(UUID $uuid): Post
-    {
-        $statement = $this->connection->prepare("SELECT * FROM posts WHERE author_uuid = :author_uuid");
-        $statement->execute([
-            ":author_uuid"=>$uuid,
-        ]);
-
-        return $this->getPost($statement, $uuid);
-    }
-
-    public function getPost(PDOStatement $statement, string $postPayload): Post
-    {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if ($result === false) {
-            throw new PostNotFoundException("Post not found: $postPayload");
+            throw new PostNotFoundException("Post not found: $uuid");
         }
 
         return new Post(

@@ -4,6 +4,10 @@ use src\Blog\Exceptions\HttpException;
 
 use src\Blog\Http\Actions\Users\CreateUser;
 use src\Blog\Http\Actions\Users\FindByUsername;
+
+use src\Blog\Http\Actions\Posts\CreatePost;
+use src\Blog\Http\Actions\Posts\FindByUuid;
+
 use src\Blog\Http\Request;
 use src\Blog\Http\ErrorResponse;
 
@@ -29,16 +33,17 @@ try {
     return;
 }
 
+$pdo = new PDO("sqlite:" . __DIR__ . "/blog.sqlite");
 $routes = [
     "GET" => [
-        '/users/show' => new FindByUsername(new SqliteUserRepository(new PDO("sqlite:" . __DIR__ . "/blog.sqlite"))),
-//        '/posts/show' => new FindByUsername(new SqlitePostRepository(new PDO("sqlite:" . __DIR__ . "/blog.sqlite"))),
-//        '/comments/show' => new FindByUsername(new SqliteCommentRepository(new PDO("sqlite:" . __DIR__ . "/blog.sqlite")))
+        '/users/show' => new FindByUsername(new SqliteUserRepository($pdo)),
+        '/posts/show' => new FindByUuid(new SqlitePostRepository($pdo)),
+//        '/comments/show' => new FindByUsername(new SqliteCommentRepository($pdo))
     ],
     'POST' => [
-        '/users/create' => new CreateUser(new SqliteUserRepository(new PDO("sqlite:" . __DIR__ . "/blog.sqlite"))),
-//        '/posts/create' => new CreatePost(new SqlitePostRepository(new PDO("sqlite:" . __DIR__ . "/blog.sqlite"))),
-//        '/comments/create' => new CreateComment(new SqliteCommentRepository(new PDO("sqlite:" . __DIR__ . "/blog.sqlite")))
+        '/users/create' => new CreateUser(new SqliteUserRepository($pdo)),
+        '/posts/create' => new CreatePost(new SqlitePostRepository($pdo), new SqliteUserRepository($pdo)),
+//        '/comments/create' => new CreateComment(new SqliteCommentRepository($pdo))
     ]
 ];
 
