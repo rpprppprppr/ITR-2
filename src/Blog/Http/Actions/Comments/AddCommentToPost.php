@@ -19,7 +19,7 @@ use src\Blog\Http\SuccessfulResponse;
 use src\Blog\Http\Request;
 use src\Blog\Http\Response;
 
-readonly class CreateComment implements ActionsInterface
+readonly class AddCommentToPost implements ActionsInterface
 {
     public function __construct(
         private CommentRepositoryInterface $commentRepository,
