@@ -50,4 +50,16 @@ readonly class SqliteCommentRepository implements CommentRepositoryInterface
             $result['text']
         );
     }
+
+    public function delete(UUID $uuid): void
+    {
+        $statement = $this->connection->prepare("DELETE FROM comments WHERE uuid = :uuid");
+        $statement->execute([
+            ':uuid' => (string)$uuid
+        ]);
+
+        if ($statement->rowCount() === 0) {
+            throw new CommentNotFoundException("Comment not found: $uuid");
+        }
+    }
 }

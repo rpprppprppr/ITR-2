@@ -62,5 +62,4 @@ readonly class SqlitePostRepository implements PostRepositoryInterface
             throw new PostNotFoundException("Post not found: $uuid");
         }
     }
-
 }

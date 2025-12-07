@@ -66,4 +66,16 @@ readonly class SqliteUserRepository implements UserRepositoryInterface
             new Name($result["first_name"], $result["last_name"])
         );
     }
+
+    public function delete(UUID $uuid): void
+    {
+        $statement = $this->connection->prepare("DELETE FROM users WHERE uuid = :uuid");
+        $statement->execute([
+            ':uuid' => (string)$uuid
+        ]);
+
+        if ($statement->rowCount() === 0) {
+            throw new UserNotFoundException("User not found: $uuid");
+        }
+    }
 }

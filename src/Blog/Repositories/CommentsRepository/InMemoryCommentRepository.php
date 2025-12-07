@@ -25,4 +25,17 @@ class InMemoryCommentRepository implements CommentRepositoryInterface
 
         throw new CommentNotFoundException("Comment not found: $uuid");
     }
+
+    public function delete(UUID $uuid): void
+    {
+        foreach ($this->comments as $index => $comment) {
+            if ((string)$comment->getId() === (string)$uuid) {
+                unset($this->comments[$index]);
+                $this->comments = array_values($this->comments);
+                return;
+            }
+        }
+
+        throw new CommentNotFoundException("Comment not found: $uuid");
+    }
 }

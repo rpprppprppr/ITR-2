@@ -4,6 +4,7 @@ use src\Blog\Exceptions\HttpException;
 
 use src\Blog\Http\Actions\Users\CreateUser;
 use src\Blog\Http\Actions\Users\FindByUsername;
+use src\Blog\Http\Actions\Users\DeleteUser;
 
 use src\Blog\Http\Actions\Posts\CreatePost;
 use src\Blog\Http\Actions\Posts\FindPostByUuid;
@@ -11,6 +12,7 @@ use src\Blog\Http\Actions\Posts\DeletePost;
 
 use src\Blog\Http\Actions\Comments\AddCommentToPost;
 use src\Blog\Http\Actions\Comments\FindCommentByUuid;
+use src\Blog\Http\Actions\Comments\DeleteComment;
 
 use src\Blog\Http\Request;
 use src\Blog\Http\ErrorResponse;
@@ -57,7 +59,9 @@ $routes = [
         )
     ],
     'DELETE' => [
-        '/posts' => new DeletePost(new SqlitePostRepository($pdo))
+        '/users' => new DeleteUser(new SqliteUserRepository($pdo)),
+        '/posts' => new DeletePost(new SqlitePostRepository($pdo)),
+        '/comments' => new DeleteComment(new SqliteCommentRepository($pdo))
     ]
 ];
 

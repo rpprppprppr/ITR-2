@@ -10,4 +10,5 @@ interface UserRepositoryInterface
     public function save(User $user): void;
     public function get(UUID $uuid): User;
     public function getByUsername(string $username): User;
+    public function delete(UUID $uuid): void;
 }
