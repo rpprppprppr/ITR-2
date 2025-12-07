@@ -1,11 +1,11 @@
 <?php
 
-namespace src\Blog\Http\Actions\Users;
+namespace src\Blog\Http\Actions\Posts;
 
 use src\Blog\Exceptions\HttpException;
-use src\Blog\Exceptions\UserNotFoundException;
+use src\Blog\Exceptions\PostNotFoundException;
 
-use src\Blog\Repositories\UsersRepository\UserRepositoryInterface;
+use src\Blog\Repositories\PostsRepository\PostRepositoryInterface;
 
 use src\Blog\Http\Actions\ActionsInterface;
 
@@ -14,30 +14,34 @@ use src\Blog\Http\SuccessfulResponse;
 use src\Blog\Http\Request;
 use src\Blog\Http\Response;
 
-readonly class FindByUsername implements ActionsInterface
+use src\Blog\UUID;
+
+readonly class FindPostByUuid implements ActionsInterface
 {
     public function __construct(
-        private UserRepositoryInterface $userRepository
+        private PostRepositoryInterface $postRepository
     )
     {}
 
     public function handle(Request $request): Response
     {
         try {
-            $username = $request->query('username');
+            $uuid = new UUID($request->query('uuid'));
         } catch (HttpException $exception) {
             return new ErrorResponse($exception->getMessage());
         }
 
         try {
-            $user = $this->userRepository->getByUsername($username);
-        } catch (UserNotFoundException $exception) {
+            $post = $this->postRepository->get($uuid);
+        } catch (PostNotFoundException $exception) {
             return new ErrorResponse($exception->getMessage());
         }
 
+
         return new SuccessfulResponse([
-            'username' => $username,
-            'name' => (string)$user->getName()
+            'author_uuid' => (string)$post->getAuthorId(),
+            'title' => $post->getTitle(),
+            'text' => $post->getText()
         ]);
     }
 }
