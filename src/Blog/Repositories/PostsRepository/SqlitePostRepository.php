@@ -50,4 +50,17 @@ readonly class SqlitePostRepository implements PostRepositoryInterface
             $result["text"]
         );
     }
+
+    public function delete(UUID $uuid): void
+    {
+        $statement = $this->connection->prepare("DELETE FROM posts WHERE uuid = :uuid");
+        $statement->execute([
+            ':uuid' => (string)$uuid
+        ]);
+
+        if ($statement->rowCount() === 0) {
+            throw new PostNotFoundException("Post not found: $uuid");
+        }
+    }
+
 }

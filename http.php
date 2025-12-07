@@ -7,6 +7,7 @@ use src\Blog\Http\Actions\Users\FindByUsername;
 
 use src\Blog\Http\Actions\Posts\CreatePost;
 use src\Blog\Http\Actions\Posts\FindPostByUuid;
+use src\Blog\Http\Actions\Posts\DeletePost;
 
 use src\Blog\Http\Actions\Comments\AddCommentToPost;
 use src\Blog\Http\Actions\Comments\FindCommentByUuid;
@@ -54,6 +55,9 @@ $routes = [
             new SqlitePostRepository($pdo),
             new SqliteUserRepository($pdo)
         )
+    ],
+    'DELETE' => [
+        '/posts' => new DeletePost(new SqlitePostRepository($pdo))
     ]
 ];
 
