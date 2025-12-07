@@ -8,6 +8,11 @@ class ErrorResponse extends Response
         private readonly string $reason = "Something goes wrong"
     ) {}
 
+    public function reason(): string
+    {
+        return $this->reason;
+    }
+
     protected function isSuccess(): bool
     {
         return false;

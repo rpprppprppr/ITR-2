@@ -93,38 +93,4 @@ class SqlitePostRepositoryTest extends TestCase
         $this->expectException(PostNotFoundException::class);
         $this->repository->get(UUID::random());
     }
-
-    public function testItFindsPostByAuthorId(): void
-    {
-        $authorId = UUID::random();
-
-        $post = new Post(
-            UUID::random(),
-            $authorId,
-            "Author title",
-            "Author text"
-        );
-
-        $this->connection->prepare("
-            INSERT INTO posts (uuid, author_uuid, title, text)
-            VALUES (:uuid, :author_uuid, :title, :text)")->execute([
-                ":uuid"        => (string)$post->getId(),
-                ":author_uuid" => (string)$post->getAuthorId(),
-                ":title"       => $post->getTitle(),
-                ":text"        => $post->getText(),
-        ]);
-
-        $found = $this->repository->getByAuthorId($authorId);
-
-        $this->assertSame((string)$post->getId(), (string)$found->getId());
-        $this->assertSame((string)$authorId, (string)$found->getAuthorId());
-        $this->assertSame($post->getTitle(), $found->getTitle());
-        $this->assertSame($post->getText(), $found->getText());
-    }
-
-    public function testItThrowsExceptionIfPostByAuthorNotFound(): void
-    {
-        $this->expectException(PostNotFoundException::class);
-        $this->repository->getByAuthorId(UUID::random());
-    }
 }

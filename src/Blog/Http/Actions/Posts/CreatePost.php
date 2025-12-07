@@ -6,6 +6,7 @@ use src\Blog\Post;
 use src\Blog\UUID;
 
 use src\Blog\Exceptions\HttpException;
+use src\Blog\Exceptions\InvalidArgumentException;
 use src\Blog\Exceptions\UserNotFoundException;
 
 use src\Blog\Repositories\PostsRepository\PostRepositoryInterface;
@@ -41,7 +42,7 @@ readonly class CreatePost implements ActionsInterface
             );
         } catch (UserNotFoundException $exception) {
             return new ErrorResponse("Author not found: " . $exception->getMessage());
-        } catch (HttpException $exception) {
+        } catch (HttpException | InvalidArgumentException $exception) {
             return new ErrorResponse($exception->getMessage());
         }
 
