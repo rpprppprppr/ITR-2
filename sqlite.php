@@ -2,18 +2,20 @@
 
 $connection = new PDO("sqlite:" . __DIR__ . "/blog.sqlite");
 
-$sql = <<<SQL
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS posts;
-DROP TABLE IF EXISTS comments;
+$connection->exec("DROP TABLE IF EXISTS comments;");
+$connection->exec("DROP TABLE IF EXISTS posts;");
+$connection->exec("DROP TABLE IF EXISTS users;");
 
-CREATE TABLE users(
-      uuid TEXT NOT NULL CONSTRAINT users_uuid_primary_key PRIMARY KEY,
-      username TEXT NOT NULL CONSTRAINT username_unique UNIQUE,
-      first_name TEXT,
-      last_name TEXT
+$connection->exec("
+CREATE TABLE users (
+    uuid TEXT NOT NULL PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    first_name TEXT,
+    last_name TEXT
 );
+");
 
+$connection->exec("
 CREATE TABLE posts(
       uuid TEXT NOT NULL CONSTRAINT posts_uuid_primary_key PRIMARY KEY,
       author_uuid TEXT NOT NULL,
@@ -21,7 +23,9 @@ CREATE TABLE posts(
       text TEXT NOT NULL,
       FOREIGN KEY (author_uuid) REFERENCES users(uuid)
 );
+");
 
+$connection->exec("
 CREATE TABLE comments(
      uuid TEXT NOT NULL CONSTRAINT comments_uuid_primary_key PRIMARY KEY,
      post_uuid TEXT NOT NULL,
@@ -31,5 +35,4 @@ CREATE TABLE comments(
      FOREIGN KEY (author_uuid) REFERENCES users(uuid)
 );
 SQL;
-
-$connection->exec($sql);
+");
