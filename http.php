@@ -17,7 +17,7 @@ use src\Blog\Http\Actions\Comments\DeleteComment;
 use src\Blog\Http\Request;
 use src\Blog\Http\ErrorResponse;
 
-$container = require __DIR__ . './bootstrap.php';
+$container = require __DIR__ . '/bootstrap.php';
 
 $request = new Request($_GET, $_SERVER, file_get_contents('php://input') );
 
