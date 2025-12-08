@@ -17,11 +17,7 @@ use src\Blog\Http\Actions\Comments\DeleteComment;
 use src\Blog\Http\Request;
 use src\Blog\Http\ErrorResponse;
 
-use src\Blog\Repositories\UsersRepository\SqliteUserRepository;
-use src\Blog\Repositories\PostsRepository\SqlitePostRepository;
-use src\Blog\Repositories\CommentsRepository\SqliteCommentRepository;
-
-require_once __DIR__ . "/vendor/autoload.php";
+$container = require __DIR__ . './bootstrap.php';
 
 $request = new Request($_GET, $_SERVER, file_get_contents('php://input') );
 
@@ -39,29 +35,21 @@ try {
     return;
 }
 
-$pdo = new PDO("sqlite:" . __DIR__ . "/blog.sqlite");
 $routes = [
     "GET" => [
-        '/users/show' => new FindByUsername(new SqliteUserRepository($pdo)),
-        '/posts/show' => new FindPostByUuid(new SqlitePostRepository($pdo)),
-        '/comments/show' => new FindCommentByUuid(new SqliteCommentRepository($pdo))
+        '/users/show' => FindByUsername::class,
+        '/posts/show' => FindPostByUuid::class,
+        '/comments/show' => FindCommentByUuid::class
     ],
     'POST' => [
-        '/users/create' => new CreateUser(new SqliteUserRepository($pdo)),
-        '/posts/create' => new CreatePost(
-            new SqlitePostRepository($pdo),
-            new SqliteUserRepository($pdo)
-        ),
-        '/posts/comment' => new AddCommentToPost(
-            new SqliteCommentRepository($pdo),
-            new SqlitePostRepository($pdo),
-            new SqliteUserRepository($pdo)
-        )
+        '/users/create' => CreateUser::class,
+        '/posts/create' => CreatePost::class,
+        '/posts/comment' => AddCommentToPost::class
     ],
     'DELETE' => [
-        '/users' => new DeleteUser(new SqliteUserRepository($pdo)),
-        '/posts' => new DeletePost(new SqlitePostRepository($pdo)),
-        '/comments' => new DeleteComment(new SqliteCommentRepository($pdo))
+        '/users' => DeleteUser::class,
+        '/posts' => DeletePost::class,
+        '/comments' => DeleteComment::class
     ]
 ];
 
@@ -75,7 +63,9 @@ if (!array_key_exists($path, $routes[$method])) {
     return;
 }
 
-$action = $routes[$method][$path];
+$actionClassName = $routes[$method][$path];
+
+$action = $container->get($actionClassName);
 
 try {
     $response = $action->handle($request);

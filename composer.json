@@ -20,7 +20,8 @@
         "fakerphp/faker": "^1.24",
         "ext-pdo": "*",
         "symfony/polyfill-uuid": "^1.33",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "psr/container": "^2.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
