@@ -25,7 +25,6 @@ class CreateUserCommandTest extends TestCase
         {
             protected bool $called = false;
 
-
             public function save(User $user): void
             {
                 $this->called = true;
@@ -36,10 +35,12 @@ class CreateUserCommandTest extends TestCase
                 throw new UserNotFoundException("Not found");
             }
 
-            public function getByUserName(string $username): User
+            public function getByUsername(string $username): User
             {
                 throw new UserNotFoundException("Not found");
             }
+
+            public function delete(UUID $uuid): void {}
         };
     }
 
@@ -58,6 +59,8 @@ class CreateUserCommandTest extends TestCase
             {
                 return new User(UUID::random(), $username, new Name("First", "Last"));
             }
+
+            public function delete(UUID $uuid): void {}
         };
 
         $command = new CreateUserCommand($usersRepository);
@@ -107,7 +110,7 @@ class CreateUserCommandTest extends TestCase
                 throw new UserNotFoundException("User not found: $uuid");
             }
 
-            public function getByUserName(string $username): User
+            public function getByUsername(string $username): User
             {
                 throw new UserNotFoundException("User not found: $username");
             }
@@ -116,6 +119,8 @@ class CreateUserCommandTest extends TestCase
             {
                 return $this->called;
             }
+
+            public function delete(UUID $uuid): void {}
         };
 
         $command = new CreateUserCommand($usersRepository);
