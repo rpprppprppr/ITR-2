@@ -32,7 +32,7 @@ readonly class SqlitePostLikeRepository implements PostLikeRepositoryInterface
 
     public function getByPostUuid(UUID $postUuid): array
     {
-        $statement = $this->connection->prepare("SELECT * FROM postLikes WHERE post_uuid = :postUuid");
+        $statement = $this->connection->prepare("SELECT * FROM postLikes WHERE post_uuid = :post_uuid");
         $statement->execute([
             ':post_uuid' => (string)$postUuid,
         ]);

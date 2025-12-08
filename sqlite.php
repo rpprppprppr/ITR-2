@@ -6,6 +6,7 @@ $connection->exec("DROP TABLE IF EXISTS comments;");
 $connection->exec("DROP TABLE IF EXISTS posts;");
 $connection->exec("DROP TABLE IF EXISTS users;");
 $connection->exec("DROP TABLE IF EXISTS postLikes;");
+$connection->exec("DROP TABLE IF EXISTS commentLikes;");
 
 $connection->exec("
     CREATE TABLE users (
@@ -48,6 +49,21 @@ $connection->exec("
 ");
 
 $connection->exec("
-    CREATE UNIQUE INDEX unique_like 
+    CREATE UNIQUE INDEX unique_like
     ON postLikes(post_uuid, user_uuid);
+");
+
+$connection->exec("
+    CREATE TABLE commentLikes(
+         uuid TEXT NOT NULL CONSTRAINT commentLikes_uuid_primary_key PRIMARY KEY,
+         comment_uuid TEXT NOT NULL,
+         user_uuid TEXT NOT NULL,
+         FOREIGN KEY (comment_uuid) REFERENCES comments(uuid),
+         FOREIGN KEY (user_uuid) REFERENCES users(uuid)
+    );
+");
+
+$connection->exec("
+    CREATE UNIQUE INDEX unique_like 
+    ON commentLikes(comment_uuid, user_uuid);
 ");

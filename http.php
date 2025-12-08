@@ -15,6 +15,9 @@ use src\Blog\Http\Actions\Comments\DeleteComment;
 use src\Blog\Http\Actions\PostLikes\AddLikeToPost;
 use src\Blog\Http\Actions\PostLikes\DeletePostLike;
 
+use src\Blog\Http\Actions\CommentLikes\AddLikeToComment;
+use src\Blog\Http\Actions\CommentLikes\DeleteCommentLike;
+
 use src\Blog\Http\Request;
 use src\Blog\Http\ErrorResponse;
 
@@ -45,12 +48,14 @@ $routes = [
         '/posts/create' => CreatePost::class,
         '/posts/comment' => AddCommentToPost::class,
         '/posts/like' => AddLikeToPost::class,
+        '/comments/like' => AddLikeToComment::class
     ],
     'DELETE' => [
         '/users' => DeleteUser::class,
         '/posts' => DeletePost::class,
         '/comments' => DeleteComment::class,
-        '/postlikes' => DeletePostLike::class
+        '/postlikes' => DeletePostLike::class,
+        '/commentlikes' => DeleteCommentLike::class
     ]
 ];
 
