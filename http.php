@@ -7,12 +7,13 @@ use src\Blog\Http\Actions\Users\FindByUsername;
 use src\Blog\Http\Actions\Users\DeleteUser;
 
 use src\Blog\Http\Actions\Posts\CreatePost;
-use src\Blog\Http\Actions\Posts\FindPostByUuid;
 use src\Blog\Http\Actions\Posts\DeletePost;
 
 use src\Blog\Http\Actions\Comments\AddCommentToPost;
-use src\Blog\Http\Actions\Comments\FindCommentByUuid;
 use src\Blog\Http\Actions\Comments\DeleteComment;
+
+use src\Blog\Http\Actions\PostLikes\AddLikeToPost;
+use src\Blog\Http\Actions\PostLikes\DeletePostLike;
 
 use src\Blog\Http\Request;
 use src\Blog\Http\ErrorResponse;
@@ -38,18 +39,18 @@ try {
 $routes = [
     "GET" => [
         '/users/show' => FindByUsername::class,
-        '/posts/show' => FindPostByUuid::class,
-        '/comments/show' => FindCommentByUuid::class
     ],
     'POST' => [
         '/users/create' => CreateUser::class,
         '/posts/create' => CreatePost::class,
-        '/posts/comment' => AddCommentToPost::class
+        '/posts/comment' => AddCommentToPost::class,
+        '/posts/like' => AddLikeToPost::class,
     ],
     'DELETE' => [
         '/users' => DeleteUser::class,
         '/posts' => DeletePost::class,
-        '/comments' => DeleteComment::class
+        '/comments' => DeleteComment::class,
+        '/postlikes' => DeletePostLike::class
     ]
 ];
 
