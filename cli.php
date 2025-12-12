@@ -4,7 +4,7 @@ use src\Blog\Commands\Arguments;
 use src\Blog\Commands\CreateUserCommand;
 use src\Blog\Exceptions\CommandException;
 
-$container = require __DIR__ . './bootstrap.php';
+$container = require __DIR__ . '/bootstrap.php';
 
 $command = $container->get(CreateUserCommand::class);
 
