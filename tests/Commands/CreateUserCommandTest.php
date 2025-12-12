@@ -66,6 +66,7 @@ class CreateUserCommandTest extends TestCase
 
         $command = new CreateUserCommand($usersRepository, new DummyLogger());
 
+        $this->expectException(CommandException::class);
         $this->expectExceptionMessage("User already exists: Ivan");
 
         $command->handle(new Arguments([
