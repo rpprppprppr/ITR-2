@@ -9,6 +9,7 @@ use PDO;
 use src\Blog\Exceptions\PostNotFoundException;
 
 use src\Blog\Repositories\PostsRepository\SqlitePostRepository;
+use src\Blog\UnitTests\DummyLogger;
 
 use src\Blog\UUID;
 use src\Blog\Post;
@@ -32,7 +33,7 @@ class SqlitePostRepositoryTest extends TestCase
             )
         ");
 
-        $this->repository = new SqlitePostRepository($this->connection);
+        $this->repository = new SqlitePostRepository($this->connection, new DummyLogger());
     }
 
     public function testItSavesPostToRepository(): void
@@ -74,10 +75,10 @@ class SqlitePostRepositoryTest extends TestCase
         $this->connection->prepare("
             INSERT INTO posts (uuid, author_uuid, title, text)
             VALUES (:uuid, :author_uuid, :title, :text)")->execute([
-                ":uuid"        => (string)$post->getId(),
+                ":uuid" => (string)$post->getId(),
                 ":author_uuid" => (string)$post->getAuthorId(),
-                ":title"       => $post->getTitle(),
-                ":text"        => $post->getText(),
+                ":title" => $post->getTitle(),
+                ":text" => $post->getText(),
         ]);
 
         $found = $this->repository->get($uuid);

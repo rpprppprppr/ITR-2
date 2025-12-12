@@ -4,6 +4,7 @@ namespace src\Blog\Repositories\UsersRepository;
 
 use PDO;
 use PDOStatement;
+use Psr\Log\LoggerInterface;
 
 use src\Blog\Person\Name;
 use src\Blog\User;
@@ -13,9 +14,9 @@ use src\Blog\UUID;
 readonly class SqliteUserRepository implements UserRepositoryInterface
 {
     public function __construct(
-        private PDO $connection
-    )
-    {}
+        private PDO $connection,
+        private LoggerInterface $logger
+    ) {}
 
     public function save(User $user): void
     {
@@ -25,11 +26,13 @@ readonly class SqliteUserRepository implements UserRepositoryInterface
         ");
 
         $statement->execute([
-            ":uuid"=>$user->getId(),
-            ":username"=>$user->getUsername(),
-            ":first_name"=>$user->getName()->getFirstName(),
-            ":last_name"=>$user->getName()->getLastName()
+            ":uuid" => $user->getId(),
+            ":username" => $user->getUsername(),
+            ":first_name" => $user->getName()->getFirstName(),
+            ":last_name" => $user->getName()->getLastName()
         ]);
+
+        $this->logger->info("User saved", ['uuid' => (string)$user->getId()]);
     }
 
     public function get(UUID $uuid): User
@@ -39,7 +42,7 @@ readonly class SqliteUserRepository implements UserRepositoryInterface
             ":uuid" => (string)$uuid,
         ]);
 
-        return $this->getUserFromStatement($statement, $uuid);
+        return $this->getUserFromStatement($statement, (string)$uuid);
     }
 
     public function getByUsername(string $username): User
@@ -57,6 +60,8 @@ readonly class SqliteUserRepository implements UserRepositoryInterface
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if ($result === false) {
+            $this->logger->warning("User not found", ['identifier' => $identifier]);
+
             throw new UserNotFoundException("User not found: $identifier");
         }
 
@@ -75,6 +80,8 @@ readonly class SqliteUserRepository implements UserRepositoryInterface
         ]);
 
         if ($statement->rowCount() === 0) {
+            $this->logger->warning("User not found for deletion", ['uuid' => (string)$uuid]);
+
             throw new UserNotFoundException("User not found: $uuid");
         }
     }

@@ -3,18 +3,18 @@
 namespace src\Blog\Repositories\PostLikesRepository;
 
 use PDO;
+use Psr\Log\LoggerInterface;
 
 use src\Blog\Exceptions\PostLikeNotFoundException;
-
 use src\Blog\PostLike;
 use src\Blog\UUID;
 
 readonly class SqlitePostLikeRepository implements PostLikeRepositoryInterface
 {
     public function __construct(
-        private PDO $connection
-    )
-    {}
+        private PDO $connection,
+        private LoggerInterface $logger
+    ) {}
 
     public function save(PostLike $postLike): void
     {
@@ -24,10 +24,12 @@ readonly class SqlitePostLikeRepository implements PostLikeRepositoryInterface
         ");
 
         $statement->execute([
-            ":uuid"=>(string)$postLike->getId(),
-            ":post_uuid"=>(string)$postLike->getPostId(),
-            ":user_uuid"=>(string)$postLike->getUserId()
+            ":uuid" => (string)$postLike->getId(),
+            ":post_uuid" => (string)$postLike->getPostId(),
+            ":user_uuid" => (string)$postLike->getUserId()
         ]);
+
+        $this->logger->info("PostLike saved", ['uuid' => (string)$postLike->getId()]);
     }
 
     public function getByPostUuid(UUID $postUuid): array
@@ -48,6 +50,7 @@ readonly class SqlitePostLikeRepository implements PostLikeRepositoryInterface
                 new UUID($row['user_uuid'])
             );
         }
+
         return $likes;
     }
 
@@ -74,6 +77,8 @@ readonly class SqlitePostLikeRepository implements PostLikeRepositoryInterface
         ]);
 
         if ($statement->rowCount() === 0) {
+            $this->logger->warning("PostLike not found for deletion", ['uuid' => (string)$uuid]);
+
             throw new PostLikeNotFoundException("PostLike not found: $uuid");
         }
     }

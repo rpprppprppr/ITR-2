@@ -3,6 +3,7 @@
 namespace src\Blog\Repositories\CommentsRepository;
 
 use PDO;
+use Psr\Log\LoggerInterface;
 
 use src\Blog\Comment;
 use src\Blog\Exceptions\CommentNotFoundException;
@@ -11,9 +12,9 @@ use src\Blog\UUID;
 readonly class SqliteCommentRepository implements CommentRepositoryInterface
 {
     public function __construct(
-        private PDO $connection
-    )
-    {}
+        private PDO $connection,
+        private LoggerInterface $logger
+    ) {}
 
     public function save(Comment $comment): void
     {
@@ -23,11 +24,13 @@ readonly class SqliteCommentRepository implements CommentRepositoryInterface
         ");
 
         $statement->execute([
-            ":uuid"=>$comment->getId(),
-            ":post_uuid"=>$comment->getPostId(),
-            ":author_uuid"=>$comment->getAuthorId(),
-            ":text"=>$comment->getText()
+            ":uuid" => (string)$comment->getId(),
+            ":post_uuid" => (string)$comment->getPostId(),
+            ":author_uuid" => (string)$comment->getAuthorId(),
+            ":text" => $comment->getText()
         ]);
+
+        $this->logger->info("Comment saved", ['uuid' => (string)$comment->getId()]);
     }
 
     public function get(UUID $uuid): Comment
@@ -40,6 +43,8 @@ readonly class SqliteCommentRepository implements CommentRepositoryInterface
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if ($result === false) {
+            $this->logger->warning("Comment not found", ['uuid' => (string)$uuid]);
+
             throw new CommentNotFoundException("Comment not found: $uuid");
         }
 
@@ -59,6 +64,8 @@ readonly class SqliteCommentRepository implements CommentRepositoryInterface
         ]);
 
         if ($statement->rowCount() === 0) {
+            $this->logger->warning("Comment not found for deletion", ['uuid' => (string)$uuid]);
+
             throw new CommentNotFoundException("Comment not found: $uuid");
         }
     }

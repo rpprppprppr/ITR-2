@@ -9,6 +9,7 @@ use PDO;
 use src\Blog\Exceptions\CommentNotFoundException;
 
 use src\Blog\Repositories\CommentsRepository\SqliteCommentRepository;
+use src\Blog\UnitTests\DummyLogger;
 
 use src\Blog\UUID;
 use src\Blog\Comment;
@@ -32,7 +33,7 @@ class SqliteCommentRepositoryTest extends TestCase
             )
         ");
 
-        $this->repository = new SqliteCommentRepository($this->connection);
+        $this->repository = new SqliteCommentRepository($this->connection, new DummyLogger());
     }
 
     public function testItSavesCommentToRepository(): void

@@ -12,6 +12,7 @@ use src\Blog\Person\Name;
 
 use src\Blog\Repositories\PostsRepository\SqlitePostRepository;
 use src\Blog\Repositories\UsersRepository\UserRepositoryInterface;
+use src\Blog\UnitTests\DummyLogger;
 
 use src\Blog\Http\Request;
 use src\Blog\Http\Actions\Posts\CreatePost;
@@ -41,7 +42,7 @@ class CreatePostTest extends TestCase
             )
         ");
 
-        $this->postRepository = new SqlitePostRepository($this->connection);
+        $this->postRepository = new SqlitePostRepository($this->connection, new DummyLogger());
         $this->userRepositoryStub = $this->createStub(UserRepositoryInterface::class);
     }
 

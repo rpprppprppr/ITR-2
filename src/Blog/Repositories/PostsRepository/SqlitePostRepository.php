@@ -3,6 +3,7 @@
 namespace src\Blog\Repositories\PostsRepository;
 
 use PDO;
+use Psr\Log\LoggerInterface;
 
 use src\Blog\Post;
 use src\Blog\Exceptions\PostNotFoundException;
@@ -11,9 +12,9 @@ use src\Blog\UUID;
 readonly class SqlitePostRepository implements PostRepositoryInterface
 {
     public function __construct(
-        private PDO $connection
-    )
-    {}
+        private PDO $connection,
+        private LoggerInterface $logger
+    ) {}
 
     public function save(Post $post): void
     {
@@ -25,9 +26,11 @@ readonly class SqlitePostRepository implements PostRepositoryInterface
         $statement->execute([
             ":uuid" => (string)$post->getId(),
             ":author_uuid" => (string)$post->getAuthorId(),
-            ":title"=>$post->getTitle(),
-            ":text"=>$post->getText()
+            ":title" => $post->getTitle(),
+            ":text" => $post->getText()
         ]);
+
+        $this->logger->info("Post saved", ['uuid' => (string)$post->getId()]);
     }
 
     public function get(UUID $uuid): Post
@@ -40,6 +43,8 @@ readonly class SqlitePostRepository implements PostRepositoryInterface
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if ($result === false) {
+            $this->logger->warning("Post not found", ['uuid' => (string)$uuid]);
+
             throw new PostNotFoundException("Post not found: $uuid");
         }
 
@@ -59,6 +64,8 @@ readonly class SqlitePostRepository implements PostRepositoryInterface
         ]);
 
         if ($statement->rowCount() === 0) {
+            $this->logger->warning("Post not found for deletion", ['uuid' => (string)$uuid]);
+
             throw new PostNotFoundException("Post not found: $uuid");
         }
     }

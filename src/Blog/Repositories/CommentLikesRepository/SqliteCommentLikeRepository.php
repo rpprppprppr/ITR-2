@@ -3,18 +3,18 @@
 namespace src\Blog\Repositories\CommentLikesRepository;
 
 use PDO;
+use Psr\Log\LoggerInterface;
 
 use src\Blog\Exceptions\CommentLikeNotFoundException;
-
 use src\Blog\CommentLike;
 use src\Blog\UUID;
 
 readonly class SqliteCommentLikeRepository implements CommentLikeRepositoryInterface
 {
     public function __construct(
-        private PDO $connection
-    )
-    {}
+        private PDO $connection,
+        private LoggerInterface $logger
+    ) {}
 
     public function save(CommentLike $commentLike): void
     {
@@ -24,10 +24,12 @@ readonly class SqliteCommentLikeRepository implements CommentLikeRepositoryInter
         ");
 
         $statement->execute([
-            ":uuid"=>(string)$commentLike->getId(),
-            ":comment_uuid"=>(string)$commentLike->getCommentId(),
-            ":user_uuid"=>(string)$commentLike->getUserId()
+            ":uuid" => (string)$commentLike->getId(),
+            ":comment_uuid" => (string)$commentLike->getCommentId(),
+            ":user_uuid" => (string)$commentLike->getUserId()
         ]);
+
+        $this->logger->info("CommentLike saved", ['uuid' => (string)$commentLike->getId()]);
     }
 
     public function getByCommentUuid(UUID $commentUuid): array
@@ -48,6 +50,7 @@ readonly class SqliteCommentLikeRepository implements CommentLikeRepositoryInter
                 new UUID($row['user_uuid'])
             );
         }
+
         return $likes;
     }
 
@@ -55,7 +58,7 @@ readonly class SqliteCommentLikeRepository implements CommentLikeRepositoryInter
     {
         $statement = $this->connection->prepare("
             SELECT COUNT(*) FROM commentLikes 
-            WHERE comment_uuid  = :comment_uuid AND user_uuid = :user_uuid
+            WHERE comment_uuid = :comment_uuid AND user_uuid = :user_uuid
         ");
 
         $statement->execute([
@@ -74,6 +77,8 @@ readonly class SqliteCommentLikeRepository implements CommentLikeRepositoryInter
         ]);
 
         if ($statement->rowCount() === 0) {
+            $this->logger->warning("CommentLike not found for deletion", ['uuid' => (string)$uuid]);
+
             throw new CommentLikeNotFoundException("CommentLike not found: $uuid");
         }
     }

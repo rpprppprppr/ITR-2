@@ -10,7 +10,7 @@ use src\Blog\UUID;
 use src\Blog\User;
 use src\Blog\Person\Name;
 
-class CreateUserCommand
+readonly class CreateUserCommand
 {
     public function __construct(
         private UserRepositoryInterface $usersRepository,
