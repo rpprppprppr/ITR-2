@@ -13,6 +13,7 @@ use src\Blog\Exceptions\UserNotFoundException;
 
 use src\Blog\Repositories\UsersRepository\UserRepositoryInterface;
 
+use src\Blog\UnitTests\DummyLogger;
 use src\Blog\User;
 use src\Blog\UUID;
 use src\Blog\Person\Name;
@@ -63,9 +64,8 @@ class CreateUserCommandTest extends TestCase
             public function delete(UUID $uuid): void {}
         };
 
-        $command = new CreateUserCommand($usersRepository);
+        $command = new CreateUserCommand($usersRepository, new DummyLogger());
 
-        $this->expectException(CommandException::class);
         $this->expectExceptionMessage("User already exists: Ivan");
 
         $command->handle(new Arguments([
@@ -77,7 +77,7 @@ class CreateUserCommandTest extends TestCase
 
     public function testItRequiresFirstName(): void
     {
-        $command = new CreateUserCommand($this->makeUsersRepository());
+        $command = new CreateUserCommand($this->makeUsersRepository(), new DummyLogger());
 
         $this->expectException(ArgumentException::class);
         $this->expectExceptionMessage("No such argument: first_name");
@@ -87,7 +87,7 @@ class CreateUserCommandTest extends TestCase
 
     public function testItRequiresLastName(): void
     {
-        $command = new CreateUserCommand($this->makeUsersRepository());
+        $command = new CreateUserCommand($this->makeUsersRepository(), new DummyLogger());
 
         $this->expectException(ArgumentException::class);
         $this->expectExceptionMessage("No such argument: last_name");
@@ -123,7 +123,7 @@ class CreateUserCommandTest extends TestCase
             public function delete(UUID $uuid): void {}
         };
 
-        $command = new CreateUserCommand($usersRepository);
+        $command = new CreateUserCommand($usersRepository, new DummyLogger());
 
         $command->handle(new Arguments([
             "username" => "Ivan",

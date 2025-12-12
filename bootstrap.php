@@ -2,6 +2,11 @@
 
 use src\Blog\Container\DIContainer;
 
+use Psr\Log\LoggerInterface;
+use Monolog\Logger;
+use Monolog\Level;
+use Monolog\Handler\StreamHandler;
+
 use src\Blog\Repositories\UsersRepository\UserRepositoryInterface;
 use src\Blog\Repositories\PostsRepository\PostRepositoryInterface;
 use src\Blog\Repositories\CommentsRepository\CommentRepositoryInterface;
@@ -25,5 +30,10 @@ $container->bind(PostRepositoryInterface::class, SqlitePostRepository::class);
 $container->bind(CommentRepositoryInterface::class, SqliteCommentRepository::class);
 $container->bind(PostLikeRepositoryInterface::class, SqlitePostLikeRepository::class);
 $container->bind(CommentLikeRepositoryInterface::class, SqliteCommentLikeRepository::class);
+
+$container->bind(LoggerInterface::class,  new Logger("blog")
+    ->pushHandler(new StreamHandler(__DIR__ . "/logs/blog.log"))
+    ->pushHandler(new StreamHandler(__DIR__ . "/logs/blog.error.log", Level::Error, bubble: false))
+    ->pushHandler(new StreamHandler("php://stdout")));
 
 return $container;
