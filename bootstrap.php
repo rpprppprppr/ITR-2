@@ -2,6 +2,7 @@
 
 use src\Blog\Container\DIContainer;
 
+use Dotenv\Dotenv;
 use Psr\Log\LoggerInterface;
 use Monolog\Logger;
 use Monolog\Level;
@@ -21,9 +22,11 @@ use src\Blog\Repositories\CommentLikesRepository\SqliteCommentLikeRepository;
 
 require_once __DIR__ . "/vendor/autoload.php";
 
+Dotenv::createImmutable(__DIR__)->safeLoad();
+
 $container = new DIContainer();
 
-$container->bind(PDO::class, new PDO("sqlite:" . __DIR__ . "/blog.sqlite"));
+$container->bind(PDO::class, new PDO("sqlite:" . __DIR__ . "/" . $_ENV["SQLITE_DB_PATH"]));
 
 $container->bind(UserRepositoryInterface::class, SqliteUserRepository::class);
 $container->bind(PostRepositoryInterface::class, SqlitePostRepository::class);
@@ -31,9 +34,18 @@ $container->bind(CommentRepositoryInterface::class, SqliteCommentRepository::cla
 $container->bind(PostLikeRepositoryInterface::class, SqlitePostLikeRepository::class);
 $container->bind(CommentLikeRepositoryInterface::class, SqliteCommentLikeRepository::class);
 
-$container->bind(LoggerInterface::class,  new Logger("blog")
-    ->pushHandler(new StreamHandler(__DIR__ . "/logs/blog.log"))
-    ->pushHandler(new StreamHandler(__DIR__ . "/logs/blog.error.log", Level::Error, bubble: false))
-    ->pushHandler(new StreamHandler("php://stdout")));
+$logger = new Logger("blog");
+
+if ($_ENV["LOG_TO_FILES"]) {
+    $logger
+        ->pushHandler(new StreamHandler(__DIR__ . "/logs/blog.log"))
+        ->pushHandler(new StreamHandler(__DIR__ . "/logs/blog.error.log", Level::Error, bubble: false));
+}
+
+if ($_ENV["LOG_TO_CONSOLE"]) {
+    $logger
+        ->pushHandler(new StreamHandler("php://stdout"));
+}
+$container->bind(LoggerInterface::class,  $logger);
 
 return $container;
