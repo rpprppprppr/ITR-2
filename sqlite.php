@@ -49,7 +49,7 @@ $connection->exec("
 ");
 
 $connection->exec("
-    CREATE UNIQUE INDEX unique_like
+    CREATE UNIQUE INDEX unique_like_post
     ON postLikes(post_uuid, user_uuid);
 ");
 
@@ -64,6 +64,6 @@ $connection->exec("
 ");
 
 $connection->exec("
-    CREATE UNIQUE INDEX unique_like 
+    CREATE UNIQUE INDEX unique_like_comment 
     ON commentLikes(comment_uuid, user_uuid);
 ");
