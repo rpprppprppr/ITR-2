@@ -4,6 +4,7 @@ use Psr\Log\LoggerInterface;
 
 use src\Blog\Exceptions\HttpException;
 
+use src\Blog\Http\Actions\Auth\Logout;
 use src\Blog\Http\Actions\Auth\Login;
 
 use src\Blog\Http\Actions\Users\CreateUser;
@@ -53,6 +54,7 @@ $routes = [
     ],
     'POST' => [
         '/login' => Login::class,
+        '/logout' => Logout::class,
         '/users/create' => CreateUser::class,
         '/posts/create' => CreatePost::class,
         '/posts/comment' => AddCommentToPost::class,
