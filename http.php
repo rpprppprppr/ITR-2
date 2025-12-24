@@ -4,6 +4,8 @@ use Psr\Log\LoggerInterface;
 
 use src\Blog\Exceptions\HttpException;
 
+use src\Blog\Http\Actions\Auth\Login;
+
 use src\Blog\Http\Actions\Users\CreateUser;
 use src\Blog\Http\Actions\Users\FindByUsername;
 use src\Blog\Http\Actions\Users\DeleteUser;
@@ -50,6 +52,7 @@ $routes = [
         '/users/show' => FindByUsername::class,
     ],
     'POST' => [
+        '/login' => Login::class,
         '/users/create' => CreateUser::class,
         '/posts/create' => CreatePost::class,
         '/posts/comment' => AddCommentToPost::class,

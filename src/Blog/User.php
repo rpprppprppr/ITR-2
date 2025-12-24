@@ -9,6 +9,7 @@ readonly class User
     public function __construct(
         private UUID $uuid,
         private string $username,
+        private string $hashedPassword,
         private Name $name
     )
     {}
@@ -21,6 +22,33 @@ readonly class User
     public function getUsername(): string
     {
         return $this->username;
+    }
+
+    private static function hash(string $password, UUID $uuid): string
+    {
+        return hash("sha256", $uuid . $password);
+    }
+
+    public function checkPassword(string $password): bool
+    {
+        return $this->getHashedPassword() === self::hash($password, $this->getId());
+    }
+
+    public function getHashedPassword(): string
+    {
+        return $this->hashedPassword;
+    }
+
+    public static function createForm($username, $password, Name $name): self
+    {
+        $uuid = UUID::random();
+
+        return new self(
+            $uuid,
+            $username,
+            self::hash($password, $uuid),
+            $name
+        );
     }
 
     public function getName(): Name

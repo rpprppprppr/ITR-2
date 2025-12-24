@@ -58,7 +58,7 @@ class CreateUserCommandTest extends TestCase
 
             public function getByUsername(string $username): User
             {
-                return new User(UUID::random(), $username, new Name("First", "Last"));
+                return new User(UUID::random(), $username, "123", new Name("First", "Last"));
             }
 
             public function delete(UUID $uuid): void {}
@@ -71,6 +71,7 @@ class CreateUserCommandTest extends TestCase
 
         $command->handle(new Arguments([
             "username" => "Ivan",
+            "password" => "123",
             "first_name" => "test",
             "last_name" => "test"
         ]));
@@ -83,7 +84,7 @@ class CreateUserCommandTest extends TestCase
         $this->expectException(ArgumentException::class);
         $this->expectExceptionMessage("No such argument: first_name");
 
-        $command->handle(new Arguments(["username" => "Ivan"]));
+        $command->handle(new Arguments(["username" => "Ivan", "password" => "123", "last_name" => "Ivanov"]));
     }
 
     public function testItRequiresLastName(): void
@@ -93,7 +94,17 @@ class CreateUserCommandTest extends TestCase
         $this->expectException(ArgumentException::class);
         $this->expectExceptionMessage("No such argument: last_name");
 
-        $command->handle(new Arguments(["username" => "Ivan", "first_name" => "Ivan"]));
+        $command->handle(new Arguments(["username" => "Ivan", "password" => "123", "first_name" => "Ivan"]));
+    }
+
+    public function testItRequiresPassword(): void
+    {
+        $command = new CreateUserCommand($this->makeUsersRepository(), new DummyLogger());
+
+        $this->expectException(ArgumentException::class);
+        $this->expectExceptionMessage("No such argument: password");
+
+        $command->handle(new Arguments(["username" => "Ivan", "first_name" => "Ivan", "last_name" => "Ivanov"]));
     }
 
     public function testItSavesUserToRepository(): void
@@ -128,6 +139,7 @@ class CreateUserCommandTest extends TestCase
 
         $command->handle(new Arguments([
             "username" => "Ivan",
+            "password" => "123",
             "first_name" => "Ivan",
             "last_name" => "Ivanov"
         ]));

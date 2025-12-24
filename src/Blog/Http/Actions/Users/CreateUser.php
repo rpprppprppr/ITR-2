@@ -2,7 +2,6 @@
 
 namespace src\Blog\Http\Actions\Users;
 
-use src\Blog\UUID;
 use src\Blog\User;
 use src\Blog\Person\Name;
 
@@ -27,10 +26,9 @@ readonly class CreateUser implements ActionsInterface
     public function handle(Request $request): Response
     {
         try {
-            $newUserUuid = UUID::random();
-            $user = new User(
-                $newUserUuid,
+            $user = User::createForm(
                 $request->jsonBodyField('username'),
+                $request->jsonBodyField('password'),
                 new Name(
                     $request->jsonBodyField('first_name'),
                     $request->jsonBodyField('last_name')
@@ -43,7 +41,7 @@ readonly class CreateUser implements ActionsInterface
         $this->userRepository->save($user);
 
         return new SuccessfulResponse([
-            'uuid' => (string)$newUserUuid
+            'uuid' => (string)$user->getId()
         ]);
     }
 }

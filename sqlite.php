@@ -7,11 +7,13 @@ $connection->exec("DROP TABLE IF EXISTS posts;");
 $connection->exec("DROP TABLE IF EXISTS users;");
 $connection->exec("DROP TABLE IF EXISTS postLikes;");
 $connection->exec("DROP TABLE IF EXISTS commentLikes;");
+$connection->exec("DROP TABLE IF EXISTS tokens;");
 
 $connection->exec("
     CREATE TABLE users (
         uuid TEXT NOT NULL PRIMARY KEY,
         username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
         first_name TEXT,
         last_name TEXT
     );
@@ -49,7 +51,7 @@ $connection->exec("
 ");
 
 $connection->exec("
-    CREATE UNIQUE INDEX unique_like
+    CREATE UNIQUE INDEX unique_like_post
     ON postLikes(post_uuid, user_uuid);
 ");
 
@@ -64,6 +66,15 @@ $connection->exec("
 ");
 
 $connection->exec("
-    CREATE UNIQUE INDEX unique_like 
+    CREATE UNIQUE INDEX unique_like_comment
     ON commentLikes(comment_uuid, user_uuid);
+");
+
+$connection->exec("
+    CREATE TABLE tokens(
+         token TEXT NOT NULL CONSTRAINT token_primary_key PRIMARY KEY,
+         user_uuid TEXT NOT NULL,
+         expires_on TEXT NOT NULL, 
+         FOREIGN KEY (user_uuid) REFERENCES users(uuid)
+    );
 ");

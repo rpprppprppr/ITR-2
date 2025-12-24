@@ -31,18 +31,17 @@ readonly class CreateUserCommand
             );
         }
 
-        $uuid = UUID::random();
-
-        $this->usersRepository->save(new User(
-            $uuid,
+        $user = User::createForm(
             $username,
+            $arguments->get('password'),
             new Name(
                 $arguments->get('first_name'),
-                $arguments->get('last_name'),
+                $arguments->get('last_name')
             )
-        ));
+        );
 
-        $this->logger->info("User created: $uuid");
+        $this->usersRepository->save($user);
+        $this->logger->info("User created: " . $user->getId());
     }
 
     public function userExist(string $username): bool

@@ -2,15 +2,18 @@
 
 namespace src\Blog\Http\Actions\Posts;
 
+use Psr\Log\LoggerInterface;
+use src\Blog\Http\Auth\TokenAuthenticationInterface;
 use src\Blog\Post;
 use src\Blog\UUID;
 
+use src\Blog\Exceptions\AuthException;
 use src\Blog\Exceptions\HttpException;
 use src\Blog\Exceptions\InvalidArgumentException;
 use src\Blog\Exceptions\UserNotFoundException;
 
 use src\Blog\Repositories\PostsRepository\PostRepositoryInterface;
-use src\Blog\Repositories\UsersRepository\UserRepositoryInterface;
+use src\Blog\Http\Auth\AuthenticationInterface;
 
 use src\Blog\Http\Actions\ActionsInterface;
 use src\Blog\Http\ErrorResponse;
@@ -22,18 +25,21 @@ readonly class CreatePost implements ActionsInterface
 {
     public function __construct(
         private PostRepositoryInterface $postRepository,
-        private UserRepositoryInterface $userRepository
+        private TokenAuthenticationInterface $authentication
     )
     {}
 
     public function handle(Request $request): Response
     {
         try {
+            $user = $this->authentication->user($request);
+        } catch (AuthException $error) {
+            return new ErrorResponse($error->getMessage());
+        }
+
+        try {
             $newPostUuid = UUID::random();
-            $authorUuid = new UUID($request->jsonBodyField('author_uuid'));
-
-            $this->userRepository->get($authorUuid);
-
+            $authorUuid = $user->getId();
             $post = new Post(
                 $newPostUuid,
                 $authorUuid,

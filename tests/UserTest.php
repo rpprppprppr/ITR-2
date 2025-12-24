@@ -13,17 +13,20 @@ class UserTest extends TestCase
     private User $user;
     private UUID $uuid;
     private string $username;
+    private string $password;
     private Name $name;
 
     protected function setUp(): void
     {
         $this->uuid = UUID::random();
         $this->username = "username";
+        $this->password = "123";
         $this->name = new Name("first_name", "last_name");
 
         $this->user = new User(
             $this->uuid,
             $this->username,
+            $this->password,
             $this->name
         );
     }
@@ -45,7 +48,7 @@ class UserTest extends TestCase
 
     public function testStringRepresentation(): void
     {
-        $expectedString = "{$this->username} as {$this->name}";
+        $expectedString = "$this->username as $this->name";
         $this->assertEquals($expectedString, $this->user->__toString());
     }
 }
