@@ -5,13 +5,14 @@ namespace src\Blog\Http\Actions\Comments;
 use src\Blog\Comment;
 use src\Blog\UUID;
 
+use src\Blog\Http\Auth\TokenAuthenticationInterface;
+
+use src\Blog\Exceptions\AuthException;
 use src\Blog\Exceptions\HttpException;
 use src\Blog\Exceptions\UserNotFoundException;
 use src\Blog\Exceptions\PostNotFoundException;
 
 use src\Blog\Repositories\CommentsRepository\CommentRepositoryInterface;
-use src\Blog\Repositories\PostsRepository\PostRepositoryInterface;
-use src\Blog\Repositories\UsersRepository\UserRepositoryInterface;
 
 use src\Blog\Http\Actions\ActionsInterface;
 use src\Blog\Http\ErrorResponse;
@@ -23,20 +24,22 @@ readonly class AddCommentToPost implements ActionsInterface
 {
     public function __construct(
         private CommentRepositoryInterface $commentRepository,
-        private PostRepositoryInterface $postRepository,
-        private UserRepositoryInterface $userRepository
+        private TokenAuthenticationInterface $authentication
     )
     {}
 
     public function handle(Request $request): Response
     {
         try {
+            $user = $this->authentication->user($request);
+        } catch (AuthException $error) {
+            return new ErrorResponse($error->getMessage());
+        }
+
+        try {
             $newCommentUuid = UUID::random();
             $postUuid = new UUID($request->jsonBodyField('post_uuid'));
-            $authorUuid = new UUID($request->jsonBodyField('author_uuid'));
-
-            $this->postRepository->get($postUuid);
-            $this->userRepository->get($authorUuid);
+            $authorUuid = $user->getId();
 
             $comment = new Comment(
                 $newCommentUuid,

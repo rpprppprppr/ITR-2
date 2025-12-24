@@ -37,7 +37,7 @@ readonly class PasswordAuthentication implements AuthenticationInterface
             throw new AuthException($error->getMessage());
         }
 
-        if ($user->checkPassword($password)) {
+        if (!$user->checkPassword($password)) {
             throw new AuthException("Invalid password");
         }
 

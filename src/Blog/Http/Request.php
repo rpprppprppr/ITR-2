@@ -89,18 +89,17 @@ readonly class Request
 
     public function header(string $header): string
     {
-        $headerName = mb_strtoupper("http_" . str_replace("-", "_", $header));
+        $headerName = 'HTTP_' . strtoupper(str_replace('-', '_', $header));
 
-        if (!array_key_exists($header, $this->server)) {
-            throw new HttpException("No such header in the request: $header");
+        if (isset($this->server[$headerName]) && trim($this->server[$headerName]) !== '') {
+            return trim($this->server[$headerName]);
         }
 
-        $value = trim($this->server[$headerName]);
-
-        if (empty($value)) {
-            throw new HttpException("Empty header in the request: $header");
+        $redirectHeader = 'REDIRECT_' . $headerName;
+        if (isset($this->server[$redirectHeader]) && trim($this->server[$redirectHeader]) !== '') {
+            return trim($this->server[$redirectHeader]);
         }
 
-        return $value;
+        throw new HttpException("No such header in the request: $header");
     }
 }

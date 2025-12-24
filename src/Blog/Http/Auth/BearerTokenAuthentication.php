@@ -41,7 +41,7 @@ class BearerTokenAuthentication implements TokenAuthenticationInterface
             throw new AuthException("Bad token: [$token]");
         }
 
-        if ($authToken->getExpiresOn() <> new DateTimeImmutable()) {
+        if ($authToken->getExpiresOn() < new DateTimeImmutable()) {
             throw new AuthException("Token expired: [$token]");
         }
 

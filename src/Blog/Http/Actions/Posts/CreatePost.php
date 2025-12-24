@@ -2,10 +2,10 @@
 
 namespace src\Blog\Http\Actions\Posts;
 
-use Psr\Log\LoggerInterface;
-use src\Blog\Http\Auth\TokenAuthenticationInterface;
 use src\Blog\Post;
 use src\Blog\UUID;
+
+use src\Blog\Http\Auth\TokenAuthenticationInterface;
 
 use src\Blog\Exceptions\AuthException;
 use src\Blog\Exceptions\HttpException;
@@ -13,7 +13,6 @@ use src\Blog\Exceptions\InvalidArgumentException;
 use src\Blog\Exceptions\UserNotFoundException;
 
 use src\Blog\Repositories\PostsRepository\PostRepositoryInterface;
-use src\Blog\Http\Auth\AuthenticationInterface;
 
 use src\Blog\Http\Actions\ActionsInterface;
 use src\Blog\Http\ErrorResponse;
