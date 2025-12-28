@@ -6,6 +6,7 @@ use Faker\Generator;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use src\Blog\Repositories\PostsRepository\PostRepositoryInterface;
@@ -31,21 +32,26 @@ class PopulateDB extends Command
     {
         $this
             ->setName('fake-data:populate-db')
-            ->setDescription('Populate DB with fake data');
+            ->setDescription('Populate DB with fake data')
+            ->addOption('users-number', "u", InputOption::VALUE_OPTIONAL, 'Number of users to create', 10)
+            ->addOption('posts-number', "p", InputOption::VALUE_OPTIONAL, 'Number of posts to create', 10);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $usersNumber = (int)$input->getOption('users-number');
+        $postsNumber = (int)$input->getOption('posts-number');
+
         $users = [];
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < $usersNumber; $i++) {
             $user = $this->createFakeUser();
             $users[] = $user;
             $output->writeln("User created: " . $user->getUsername());
         }
 
         foreach ($users as $user) {
-            for ($i = 0; $i < 10; $i++) {
+            for ($i = 0; $i < $postsNumber; $i++) {
                 $post = $this->createFakePost($user);
                 $output->writeln("Post created: " . $post->getTitle());
             }
@@ -75,8 +81,8 @@ class PopulateDB extends Command
         $post = new Post(
             UUID::random(),
             $user->getId(),
-            $this->faker->title(),
-            $this->faker->text(),
+            $this->faker->sentence(3),
+            $this->faker->paragraph(3, true),
         );
 
         $this->postRepository->save($post);
