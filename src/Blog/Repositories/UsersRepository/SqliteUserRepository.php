@@ -23,6 +23,7 @@ readonly class SqliteUserRepository implements UserRepositoryInterface
         $statement = $this->connection->prepare("
             INSERT INTO users (uuid, username, password, first_name, last_name) 
             VALUES (:uuid, :username, :password, :first_name, :last_name)
+            ON CONFLICT (uuid) DO UPDATE SET first_name = :first_name, last_name = :last_name
         ");
 
         $statement->execute([
@@ -61,7 +62,7 @@ readonly class SqliteUserRepository implements UserRepositoryInterface
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if ($result === false) {
-            $this->logger->warning("User not found", ['identifier' => $identifier]);
+            $this->logger->debug("User not found", ['identifier' => $identifier]);
 
             throw new UserNotFoundException("User not found: $identifier");
         }

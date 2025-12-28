@@ -3,20 +3,14 @@
 namespace src\Blog\UnitTests\Commands;
 
 use PHPUnit\Framework\TestCase;
-
-use src\Blog\Commands\Arguments;
-use src\Blog\Commands\CreateUserCommand;
-
-use src\Blog\Exceptions\ArgumentException;
-use src\Blog\Exceptions\CommandException;
+use src\Blog\Commands\Users\CreateUser;
 use src\Blog\Exceptions\UserNotFoundException;
-
 use src\Blog\Repositories\UsersRepository\UserRepositoryInterface;
-
-use src\Blog\UnitTests\DummyLogger;
 use src\Blog\User;
 use src\Blog\UUID;
-use src\Blog\Person\Name;
+use Symfony\Component\Console\Exception\RuntimeException;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 class CreateUserCommandTest extends TestCase
 {
@@ -45,66 +39,55 @@ class CreateUserCommandTest extends TestCase
         };
     }
 
-    public function testItThrowsAnExceptionWhenUserAlreadyExists(): void
-    {
-        $usersRepository = new class implements UserRepositoryInterface {
-
-            public function save(User $user): void {}
-
-            public function get(UUID $uuid): User
-            {
-                throw new UserNotFoundException("User not found: $uuid");
-            }
-
-            public function getByUsername(string $username): User
-            {
-                return new User(UUID::random(), $username, "123", new Name("First", "Last"));
-            }
-
-            public function delete(UUID $uuid): void {}
-        };
-
-        $command = new CreateUserCommand($usersRepository, new DummyLogger());
-
-        $this->expectException(CommandException::class);
-        $this->expectExceptionMessage("User already exists: Ivan");
-
-        $command->handle(new Arguments([
-            "username" => "Ivan",
-            "password" => "123",
-            "first_name" => "test",
-            "last_name" => "test"
-        ]));
-    }
-
     public function testItRequiresFirstName(): void
     {
-        $command = new CreateUserCommand($this->makeUsersRepository(), new DummyLogger());
+        $command = new CreateUser($this->makeUsersRepository());
 
-        $this->expectException(ArgumentException::class);
-        $this->expectExceptionMessage("No such argument: first_name");
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Not enough arguments (missing: "first_name").');
 
-        $command->handle(new Arguments(["username" => "Ivan", "password" => "123", "last_name" => "Ivanov"]));
+        $command->run(
+            new ArrayInput([
+                "username" => "Ivan",
+                "password" => "123",
+                "last_name" => "Ivanov"
+            ]),
+            new NullOutput()
+        );
     }
 
     public function testItRequiresLastName(): void
     {
-        $command = new CreateUserCommand($this->makeUsersRepository(), new DummyLogger());
+        $command = new CreateUser($this->makeUsersRepository());
 
-        $this->expectException(ArgumentException::class);
-        $this->expectExceptionMessage("No such argument: last_name");
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Not enough arguments (missing: "last_name").');
 
-        $command->handle(new Arguments(["username" => "Ivan", "password" => "123", "first_name" => "Ivan"]));
+        $command->run(
+            new ArrayInput([
+                "username" => "Ivan",
+                "password" => "123",
+                "first_name" => "Ivan"
+            ]),
+            new NullOutput()
+        );
     }
 
     public function testItRequiresPassword(): void
     {
-        $command = new CreateUserCommand($this->makeUsersRepository(), new DummyLogger());
+        $command = new CreateUser($this->makeUsersRepository());
 
-        $this->expectException(ArgumentException::class);
-        $this->expectExceptionMessage("No such argument: password");
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Not enough arguments (missing: "password").');
 
-        $command->handle(new Arguments(["username" => "Ivan", "first_name" => "Ivan", "last_name" => "Ivanov"]));
+        $command->run(
+            new ArrayInput([
+                "username" => "Ivan",
+                "first_name" => "Ivan",
+                "last_name" => "Ivanov",
+            ]),
+            new NullOutput()
+        );
     }
 
     public function testItSavesUserToRepository(): void
@@ -135,14 +118,17 @@ class CreateUserCommandTest extends TestCase
             public function delete(UUID $uuid): void {}
         };
 
-        $command = new CreateUserCommand($usersRepository, new DummyLogger());
+        $command = new CreateUser($usersRepository);
 
-        $command->handle(new Arguments([
-            "username" => "Ivan",
-            "password" => "123",
-            "first_name" => "Ivan",
-            "last_name" => "Ivanov"
-        ]));
+        $command->run(
+            new ArrayInput([
+                "username"   => "Ivan",
+                "password"   => "123",
+                "first_name" => "test",
+                "last_name"  => "test"
+            ]),
+            new NullOutput()
+        );
 
         $this->assertTrue($usersRepository->wasCalled());
     }

@@ -1,19 +1,26 @@
 <?php
 
-use Psr\Log\LoggerInterface;
+use src\Blog\Commands\FakeData\PopulateDB;
+use src\Blog\Commands\Users\CreateUser;
+use src\Blog\Commands\Users\UpdateUser;
+use src\Blog\Commands\Posts\DeletePost;
 
-use src\Blog\Commands\Arguments;
-use src\Blog\Commands\CreateUserCommand;
-use src\Blog\Exceptions\CommandException;
+use Symfony\Component\Console\Application;
 
 $container = require __DIR__ . '/bootstrap.php';
 
-$command = $container->get(CreateUserCommand::class);
+$application = new Application();
 
-$logger = $container->get(LoggerInterface::class);
+$commandsClasses = [
+    PopulateDB::class,
+    CreateUser::class,
+    UpdateUser::class,
+    DeletePost::class,
+];
 
-try {
-    $command->handle(Arguments::fromArgv($argv));
-} catch (CommandException $error) {
-    $logger->error($error->getMessage(), ["exception" => $error]);
+foreach ($commandsClasses as $commandClass) {
+    $command = $container->get($commandClass);
+    $application->addCommand($command);
 }
+
+$application->run();
