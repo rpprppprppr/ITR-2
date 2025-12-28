@@ -9,13 +9,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use src\Blog\Repositories\PostsRepository\PostRepositoryInterface;
 use src\Blog\Repositories\UsersRepository\UserRepositoryInterface;
+use src\Blog\Repositories\PostsRepository\PostRepositoryInterface;
+use src\Blog\Repositories\CommentsRepository\CommentRepositoryInterface;
 
 use src\Blog\UUID;
 use src\Blog\User;
 use src\Blog\Person\Name;
 use src\Blog\Post;
+use src\Blog\Comment;
 
 class PopulateDB extends Command
 {
@@ -23,6 +25,7 @@ class PopulateDB extends Command
         private Generator $faker,
         private UserRepositoryInterface $userRepository,
         private PostRepositoryInterface $postRepository,
+        private CommentRepositoryInterface $commentRepository,
     )
     {
         parent::__construct();
@@ -33,14 +36,16 @@ class PopulateDB extends Command
         $this
             ->setName('fake-data:populate-db')
             ->setDescription('Populate DB with fake data')
-            ->addOption('users-number', "u", InputOption::VALUE_OPTIONAL, 'Number of users to create', 10)
-            ->addOption('posts-number', "p", InputOption::VALUE_OPTIONAL, 'Number of posts to create', 10);
+            ->addOption('users-number', "u", InputOption::VALUE_OPTIONAL, 'Number of users to create', 5)
+            ->addOption('posts-number', "p", InputOption::VALUE_OPTIONAL, 'Number of posts to create', 5)
+            ->addOption('comments-number', "c", InputOption::VALUE_OPTIONAL, 'Number of comments to create', 2);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $usersNumber = (int)$input->getOption('users-number');
         $postsNumber = (int)$input->getOption('posts-number');
+        $commentsNumber = (int)$input->getOption('comments-number');
 
         $users = [];
 
@@ -54,6 +59,15 @@ class PopulateDB extends Command
             for ($i = 0; $i < $postsNumber; $i++) {
                 $post = $this->createFakePost($user);
                 $output->writeln("Post created: " . $post->getTitle());
+
+                for ($j = 0; $j < $commentsNumber; $j++) {
+                    $commentAuthor = $users[array_rand($users)];
+                    $comment = $this->createFakeComment($post, $commentAuthor);
+
+                    $output->writeln(
+                        "  Comment added by {$commentAuthor->getUsername()}"
+                    );
+                }
             }
         }
 
@@ -88,5 +102,19 @@ class PopulateDB extends Command
         $this->postRepository->save($post);
 
         return $post;
+    }
+
+    private function createFakeComment(Post $post, User $author): Comment
+    {
+        $comment = new Comment(
+            UUID::random(),
+            $post->getId(),
+            $author->getId(),
+            $this->faker->paragraph(1, true),
+        );
+
+        $this->commentRepository->save($comment);
+
+        return $comment;
     }
 }
